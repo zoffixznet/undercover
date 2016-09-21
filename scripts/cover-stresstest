@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -x
+set -e
+rm -fr coverage
+mkdir coverage
+MVM_COVERAGE_LOG='coverage/cover-%d' TEST_JOBS=8 make stresstest
+cd coverage
+cat * | grep 'gen/moar/m-CORE.setting' | sort | uniq > full-cover
+cd ../
+install/bin/moar --dump CORE.setting.moarvm > setting
+./perl6 nqp/MoarVM/tools/parse_coverage_report.p6 \
+    --annotations=setting coverage/full-cover gen/moar/m-CORE.setting
+firefox coverage/index.html

@@ -1,21 +1,24 @@
 #!/bin/bash
 
 set -x
-
-make realclean
-perl Configure.pl --gen-moar --gen-nqp --backends=moar                      &&
-perl -pi -e 's/--optimize=\K3/0/' Makefile                                  &&
-make                                                                        &&
-make test                                                                   &&
-make install                                                                &&
-cd nqp/MoarVM                                                               &&
-git checkout $(git branch -r | grep origin/line_based_coverage | tail -n1)  &&
-git pull --rebase https://github.com/MoarVM/MoarVM/                         &&
-perl Configure.pl --prefix=../../install/                                   &&
-make                                                                        &&
-make install                                                                &&
-cd ../..                                                                    &&
-install/bin/moar --help | grep MVM_COVERAGE_LOG                             &&
-    echo 'We SUCCEEDED!!'                                                   ||
+set -e
+#git clone https://github.com/rakudo/rakudo ~/coverakudo
+#cd ~/coverakudo
+perl Configure.pl --gen-moar --gen-nqp --backends=moar
+perl -pi -e 's/--optimize=\K3/0/' Makefile
+make
+make test
+make install
+rm -fr nqp/MoarVM
+mkdir nqp/MoarVM
+cd nqp/MoarVM
+git clone https://github.com/zoffixznet/MoarVM .
+git checkout line_based_coverage_4--line-num
+git pull --rebase https://github.com/MoarVM/MoarVM/
+perl Configure.pl --prefix=../../install/
+make
+make install
+cd ../..
+install/bin/moar --help | grep MVM_COVERAGE_LOG                 &&
+    echo 'We SUCCEEDED!!'                                       ||
     echo 'WE FAILED!!!!'
-
