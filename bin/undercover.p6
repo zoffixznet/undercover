@@ -6,9 +6,9 @@ use lib <
 >;
 
 use IRC::Client;
-use Sourceable::Plugin::Sourcery;
+use Undercover::Plugin::Coverage;
 
-class Sourceable::Info {
+class Undercover::Info {
     multi method irc-to-me ($ where /^\s* help \s*$/) {
         "Use s: trigger with args to give to sourcery sub."
         ~ " e.g. s: Int, 'base'. See"
@@ -27,8 +27,8 @@ class Sourceable::Info {
     :channels( %*ENV<UNDERCOVER_DEBUG> ?? '#zofbot' !! |<#perl6  #perl6-dev  #zofbot>),
     :debug,
     :plugins(
-        Sourceable::Info.new,
-        Sourceable::Plugin::Sourcery.new:
+        Undercover::Info.new,
+        Undercover::Plugin::Coverage.new:
             :executable-dir(
                 %*ENV<UNDERCOVER_EXE>
                     // '/home/zoffix/services/sourceable/perl6/'

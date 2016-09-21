@@ -6,7 +6,7 @@ use CoreHackers::Sourcery;
 has $.executable-dir is required;
 has $.core-hackers   is required;
 
-method irc-privmsg-channel ($ where /^ 's:' \s+ $<code>=.+/) {
+method irc-privmsg-channel ($ where /^ 'c:' \s+ $<code>=.+/) {
     my $code = ~$<code>;
     is-safeish $code or return "Ehhh... I'm too scared to run that code.";
 
@@ -20,7 +20,7 @@ method irc-privmsg-channel ($ where /^ 's:' \s+ $<code>=.+/) {
                 = '{$.executable-dir}gen/moar/m-CORE.setting';
             \};
             use CoreHackers::Sourcery;
-            put "SUCCESS:{sourcery( $code )[0]}";
+            print "SUCCESS:\{sourcery( $code )[0]\}";
         END
     );
     my $result = $p.out.slurp-rest;
@@ -29,14 +29,14 @@ method irc-privmsg-channel ($ where /^ 's:' \s+ $<code>=.+/) {
         unless $result ~~ /^ 'SUCCESS'/;
 
     my ($file, $line) = $result.split(':')[1,2];
-    my $url = sprintf "http://perl6.WTF/{$file.subst: :g, '/', '_'}#L$line";
-    HTTP::UserAgent.new.get: $url;
+    my $url = "http://perl6.WTF/{$file.subst: :g, '/', '_'}.coverage.html#L$line";
 
-    my $res = $ua.get("URL");
-    return "Failed to fetch coverage from $url [{$res.status-line}";
+    my $res = HTTP::UserAgent.new.get: $url;
+    return "Failed to fetch coverage from $url [{$res.status-line}]"
+        unless $res.is-success;
 
     return "Failed to figure out coverage status on $url"
-        $res.content ~~ m{
+        unless $res.content ~~ m{
             '<li' \s+ 'class="' $<status>=<[iuc]>
             '" id="L' $line '">' $<code>=\N+
         };
@@ -44,13 +44,13 @@ method irc-privmsg-channel ($ where /^ 's:' \s+ $<code>=.+/) {
     my $status = $<status> eq 'u' ?? 'uncovered'
         !! $<status> eq 'c' ?? 'covered' !! 'incomplete';
 
-    my $is-proto = $code =~ /^\s* 'proto' \s+/;
+    my $is-proto = so $<code> ~~ /^\s* 'proto' \s+/;
 
     return join ' ',
         ($status eq 'covered' ?? 'The code is hit during stresstest'
                               !! 'The code is NOT hit during stresstest'
         ),
-        ('WARNING: this line is a proto' if $is-proto),
+        ('[WARNING: this line is a proto! Check individual multies]' if $is-proto),
         "See $url for details",
     ;
 }
