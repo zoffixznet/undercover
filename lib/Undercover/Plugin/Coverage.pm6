@@ -1,5 +1,6 @@
-unit class Sourceable::Plugin::Sourcery;
+unit class Undercover::Plugin::Coverage;
 use MONKEY-SEE-NO-EVAL;
+use HTTP::UserAgent;
 use CoreHackers::Sourcery;
 
 has $.executable-dir is required;
@@ -19,15 +20,39 @@ method irc-privmsg-channel ($ where /^ 's:' \s+ $<code>=.+/) {
                 = '{$.executable-dir}gen/moar/m-CORE.setting';
             \};
             use CoreHackers::Sourcery;
-            put sourcery( $code )[1];
+            put "SUCCESS:{sourcery( $code )[0]}";
         END
     );
     my $result = $p.out.slurp-rest;
     my $merge = $result ~ "\nERR: " ~ $p.err.slurp-rest;
     return "Something's wrong: $merge.subst("\n", '␤', :g)"
-        unless $result ~~ /github/;
+        unless $result ~~ /^ 'SUCCESS'/;
 
-    return "Sauce is at $result";
+    my ($file, $line) = $result.split(':')[1,2];
+    my $url = sprintf "http://perl6.WTF/{$file.subst: :g, '/', '_'}#L$line";
+    HTTP::UserAgent.new.get: $url;
+
+    my $res = $ua.get("URL");
+    return "Failed to fetch coverage from $url [{$res.status-line}";
+
+    return "Failed to figure out coverage status on $url"
+        $res.content ~~ m{
+            '<li' \s+ 'class="' $<status>=<[iuc]>
+            '" id="L' $line '">' $<code>=\N+
+        };
+
+    my $status = $<status> eq 'u' ?? 'uncovered'
+        !! $<status> eq 'c' ?? 'covered' !! 'incomplete';
+
+    my $is-proto = $code =~ /^\s* 'proto' \s+/;
+
+    return join ' ',
+        ($status eq 'covered' ?? 'The code is hit during stresstest'
+                              !! 'The code is NOT hit during stresstest'
+        ),
+        ('WARNING: this line is a proto' if $is-proto),
+        "See $url for details",
+    ;
 }
 
 sub is-safeish ($code) {

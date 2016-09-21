@@ -15,26 +15,26 @@ class Sourceable::Info {
         ~ " http://modules.perl6.org/dist/CoreHackers::Sourcery";
     }
     multi method irc-to-me ($ where /^\s* source \s*$/) {
-        "See: https://github.com/zoffixznet/perl6-sourceable";
+        "See: https://github.com/zoffixznet/undercover";
     }
 
     multi method irc-to-me ($ where /'bot' \s* 'snack'/) { "om nom nom nom"; }
 }
 
 .run with IRC::Client.new:
-    :nick<SourceBaby>,
-    :host(%*ENV<SOURCEABLE_IRC_HOST> // 'irc.freenode.net'),
-    :channels( %*ENV<SOURCEABLE_DEBUG> ?? '#zofbot' !! |<#perl6  #perl6-dev  #zofbot>),
+    :nick<Undercover>,
+    :host(%*ENV<UNDERCOVER_IRC_HOST> // 'irc.freenode.net'),
+    :channels( %*ENV<UNDERCOVER_DEBUG> ?? '#zofbot' !! |<#perl6  #perl6-dev  #zofbot>),
     :debug,
     :plugins(
         Sourceable::Info.new,
         Sourceable::Plugin::Sourcery.new:
             :executable-dir(
-                %*ENV<SOURCEABLE_EXE>
+                %*ENV<UNDERCOVER_EXE>
                     // '/home/zoffix/services/sourceable/perl6/'
             ),
             :core-hackers(
-                %*ENV<SOURCEABLE_SOURCERY>
+                %*ENV<UNDERCOVER_SOURCERY>
                     // '/home/zoffix/services/lib/CoreHackers-Sourcery/lib'
             )
     );
