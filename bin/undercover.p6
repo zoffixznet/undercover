@@ -11,7 +11,7 @@ use Undercover::Plugin::Coverage;
 class Undercover::Info {
     multi method irc-to-me ($ where /^\s* help \s*$/) {
         "Use s: trigger with args to give to sourcery sub."
-        ~ " e.g. s: Int, 'base'. See"
+        ~ " e.g. cover: Int, 'base'. See"
         ~ " http://modules.perl6.org/dist/CoreHackers::Sourcery";
     }
     multi method irc-to-me ($ where /^\s* source \s*$/) {
