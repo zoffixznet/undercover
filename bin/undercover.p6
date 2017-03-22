@@ -25,7 +25,7 @@ class Undercover::Info {
     :nick<Undercover>,
     :username<zofbot-undercover>,
     :host(%*ENV<UNDERCOVER_IRC_HOST> // 'irc.freenode.net'),
-    :channels( %*ENV<UNDERCOVER_DEBUG> ?? '#zofbot' !! |<#perl6  #perl6-dev  #zofbot>),
+    :channels( %*ENV<UNDERCOVER_DEBUG> ?? '#zofbot' !! |<#perl6-dev  #zofbot>),
     :debug,
     :plugins(
         Undercover::Info.new,
