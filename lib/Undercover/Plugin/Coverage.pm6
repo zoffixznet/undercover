@@ -61,7 +61,7 @@ sub is-safeish ($code) {
     return if $code ~~ /<[;{]>/;
     return if $code.comb('(') != $code.comb(')');
     for <run shell qx EVAL> -> $danger {
-        return if $code ~~ /$danger/ and not $code ~~ /'"' $danger '"'/;
+        return if $code ~~ /«$danger»/
     }
     return True;
 }
