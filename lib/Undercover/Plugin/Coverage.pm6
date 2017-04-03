@@ -31,7 +31,7 @@ method irc-privmsg-channel ($e where /^ 'cover:' \s+ $<code>=.+/) {
         unless $result ~~ /^ 'SUCCESS'/;
 
     my ($file, $line) = $result.split(':')[1,2];
-    my $url = "http://perl6.WTF/SETTING__{$file.subst: :g, /\W/, '_'}_coverage.html#L$line";
+    my $url = "http://perl6.WTF/SETTING__{$file.subst: :g, /\W/, '_'}.coverage.html#L$line";
 
     my $res = HTTP::UserAgent.new.get: $url;
     return "Failed to fetch coverage from $url [{$res.status-line}]"
