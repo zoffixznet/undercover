@@ -19,7 +19,7 @@ method irc-privmsg-channel ($e where /^ 'cover:' \s+ $<code>=.+/) {
         '-e', qq:to/END/
             BEGIN \{
                 \%*ENV<SOURCERY_SETTING>
-                = '{$.executable-dir}gen/moar/m-CORE.setting';
+                = '{$.executable-dir}gen/moar/CORE.setting';
             \};
             use CoreHackers::Sourcery;
             print "SUCCESS:\{sourcery( $code )[0]\}";
@@ -31,7 +31,7 @@ method irc-privmsg-channel ($e where /^ 'cover:' \s+ $<code>=.+/) {
         unless $result ~~ /^ 'SUCCESS'/;
 
     my ($file, $line) = $result.split(':')[1,2];
-    my $url = "http://perl6.WTF/{$file.subst: :g, '/', '_'}.coverage.html#L$line";
+    my $url = "http://perl6.WTF/SETTING__{$file.subst: :g, '/', '_'}.coverage.html#L$line";
 
     my $res = HTTP::UserAgent.new.get: $url;
     return "Failed to fetch coverage from $url [{$res.status-line}]"
