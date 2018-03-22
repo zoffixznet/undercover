@@ -1,10 +1,11 @@
 {
     "perl"         : "6.c",
-    "name"         : "sourceable",
+    "name"         : "undercover",
     "version"      : "1.001001",
     "description"  : "Helper bot for Perl 6 development",
     "depends"      : [
         "IRC::Client",
+        "HTTP::UserAgent",
         "CoreHackers::Sourcery"
     ],
     "test-depends" : [
@@ -14,6 +15,6 @@
     },
     "authors" : ["Zoffix Znet"],
     "support" : {
-        "source" : "git://github.com/zoffixznet/perl6-sourceable.git"
+        "source" : "git://github.com/zoffixznet/perl6-undercover.git"
     }
 }

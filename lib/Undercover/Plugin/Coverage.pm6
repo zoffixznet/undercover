@@ -6,7 +6,7 @@ use CoreHackers::Sourcery;
 has $.executable-dir is required;
 has $.core-hackers   is required;
 
-method irc-privmsg-channel ($e where /^ 'cover:' \s+ $<code>=.+/) {
+method irc-privmsg-channel ($e where /^ 'coverage:' \s+ $<code>=.+/) {
     my $code = ~$<code>;
     unless $e.host eq 'perl6/zoffix' | 'perl6.party' {
         is-safeish $code or return "Ehhh... I'm too scared to run that code.";
@@ -31,7 +31,7 @@ method irc-privmsg-channel ($e where /^ 'cover:' \s+ $<code>=.+/) {
         unless $result ~~ /^ 'SUCCESS'/;
 
     my ($file, $line) = $result.split(':')[1,2];
-    my $url = "http://perl6.WTF/SETTING__{$file.subst: :g, /\W/, '_'}.coverage.html#L$line";
+    my $url = "https://wtf.rakudo.party/SETTING__{$file.subst: :g, /\W/, '_'}.coverage.html#L$line";
 
     my $res = HTTP::UserAgent.new.get: $url;
     return "Failed to fetch coverage from $url [{$res.status-line}]"
