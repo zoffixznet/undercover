@@ -6,7 +6,7 @@ use CoreHackers::Sourcery;
 has $.executable-dir is required;
 has $.core-hackers   is required;
 
-method irc-to-me ($e where /^ ['cover' 'age'? ':'?]? \s+ $<code>=.+/) {
+method irc-to-me ($e where /^ ['cover' 'age'? ':'?]? \s* $<code>=.+/) {
     my $code = ~$<code>;
     unless $e.host eq 'perl6/zoffix' | 'perl6.party' {
         is-safeish $code or return "Ehhh... I'm too scared to run that code.";
